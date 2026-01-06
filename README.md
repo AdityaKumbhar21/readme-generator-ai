@@ -1,17 +1,16 @@
-# 🚀 AI-Powered README Generator
+# AI-Powered README Generator
 
 An intelligent web application that leverages **Google Gemini 1.5 Flash** to automatically generate professional and well-structured README files for your projects.  
 Users simply provide the **project title, tech stack, languages used, and description**, and the AI crafts a polished README.md file ready to use.  
 
 ---
 
-## ✨ Features
+## Features
 
-- 🤖 **AI-Generated Documentation** – Uses **Gemini 1.5 Flash** to generate high-quality README files tailored to your project.  
-- 🔒 **JWT Authentication** – Secure login and user management system for personalized experience.  
-- 💾 **FileDB Integration** – Efficient file-based storage for managing generated README files.  
-- ⚡ **Modern Tech Stack** – Built with **FastAPI (backend)** and **TypeScript + React (frontend)** for performance and scalability.  
-- 🌐 **Real-Time Interaction** – Smooth communication between frontend and backend for instant README generation.  
+- **AI-Generated Documentation** – Uses **Gemini 1.5 Flash** to generate high-quality README files tailored to your project.  
+- **JWT Authentication** – Secure login and user management system for personalized experience.   
+- **Modern Tech Stack** – Built with **FastAPI (backend)** and **TypeScript + React (frontend)** for performance and scalability.  
+- **Real-Time Interaction** – Smooth communication between frontend and backend for instant README generation.  
 
 ---
 
