@@ -44,7 +44,7 @@ def get_commit_changes(repo_name, commit_sha):
     try:
         g = Github(GITHUB_TOKEN)
         repo = g.get_repo(repo_name)
-        commit = g.get_commit(commit_sha)
+        commit = repo.get_commit(commit_sha)
 
         changes = []
         for file in commit.files:
