@@ -1,49 +1,53 @@
-from fastapi import APIRouter, Request, HTTPException, Header
+from fastapi import APIRouter, Request, HTTPException
 from github import Github
 import os
 import hmac
 import hashlib
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 router = APIRouter()
 
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 
-g = Github(GITHUB_TOKEN)
-
 def verify_signature(payload_body, signature_header):
-    # verify the request actually came from github
     if not signature_header:
-        raise HTTPException(status_code=403, detail="No Signature header")
-
-    sha_name, signature = signature_header.split('=')
-    if sha_name != 'sha256':
-        raise HTTPException(status_code=501, detail="ou use sha256")
+        print("Error: Missing signature header")
+        raise HTTPException(status_code=403, detail="x-hub-signature-256 header is missing!")
     
-    # create local HMAC
-    mac = hmac.new(WEBHOOK_SECRET.encode(), payload_body, hashlib.sha256)
+    if not WEBHOOK_SECRET:
+        print("Error: WEBHOOK_SECRET is not set in environment")
+        raise HTTPException(status_code=500, detail="WEBHOOK_SECRET is not set")
 
-    if not hmac.compare_digest(mac.hexdigest(), signature):
-        raise HTTPException(status_code=403, detail="Invalid signature")
+    hash_object = hmac.new(WEBHOOK_SECRET.encode('utf-8'), msg=payload_body, digestmod=hashlib.sha256)
+    expected_signature = "sha256=" + hash_object.hexdigest()
     
+    # DEBUGGING: Print both signatures to compare them
+    print(f"DEBUG: Expected: {expected_signature}")
+    print(f"DEBUG: Received: {signature_header}")
+    
+    if not hmac.compare_digest(expected_signature, signature_header):
+        print("Error: Signatures do not match")
+        raise HTTPException(status_code=403, detail="Request signatures didn't match!")
 
 @router.post("/webhook")
-async def handle_github_webhook(request: Request, x_hub, x_hub_signature_256: str = Header(None)):
+async def handle_github_webhook(request: Request):
+    signature = request.headers.get("X-Hub-Signature-256")
+    
     payload_body = await request.body()
-
-    verify_signature(payload_body, x_hub_signature_256)
-
+    
+    verify_signature(payload_body, signature)
+    
     payload = json.loads(payload_body)
-
-    # check for 'push events
+    
     if "commits" not in payload:
         return {"message": "Not a push event, skipping"}
-    
-    # extract repo infooo
+
     repo_name = payload['repository']['full_name']
     commits = payload['commits']
-
-    print(f"received push for {repo_name} with {len(commits)} commits")
-
+    
+    print(f"Received push for {repo_name} with {len(commits)} commits")
+    
     return {"status": "received", "commits_processed": len(commits)}
