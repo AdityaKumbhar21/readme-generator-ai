@@ -14,6 +14,9 @@ class Settings(BaseSettings):
 
     ALLOWED_ORIGINS: str = ""
 
+    GITHUB_TOKEN: str
+    WEBHOOK_SECRET: str
+
     SECRET_KEY: str = Field(..., description="Secret key for JWT token signing. MUST be a strong, random string.")
     ALGORITHM: str = "HS256"  # Default algorithm for JWT
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # Default token expiration time in minutes

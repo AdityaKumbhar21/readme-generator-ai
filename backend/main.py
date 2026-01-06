@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
-from routers import readme, job, auth, user
+from routers import readme, job, auth, user, webhook_handler
 from db.database import create_tables
 from fastapi.openapi.utils import get_openapi
 
@@ -53,6 +53,7 @@ app.include_router(auth.router, prefix=settings.API_PREFIX)
 app.include_router(user.router, prefix=settings.API_PREFIX)
 app.include_router(job.router, prefix=settings.API_PREFIX)
 app.include_router(readme.router, prefix=settings.API_PREFIX)
+app.include_router(webhook_handler.router, prefix=settings.API_PREFIX)
 
 @app.get("/")
 async def root():
