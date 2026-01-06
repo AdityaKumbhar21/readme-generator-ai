@@ -53,7 +53,7 @@ app.include_router(auth.router, prefix=settings.API_PREFIX)
 app.include_router(user.router, prefix=settings.API_PREFIX)
 app.include_router(job.router, prefix=settings.API_PREFIX)
 app.include_router(readme.router, prefix=settings.API_PREFIX)
-app.include_router(webhook_handler.router, prefix=settings.API_PREFIX)
+app.include_router(webhook_handler.router)
 
 @app.get("/")
 async def root():
