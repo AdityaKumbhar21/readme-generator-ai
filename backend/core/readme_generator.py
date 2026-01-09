@@ -1,6 +1,7 @@
 # core/readme_generator.py
 
 import os
+import re
 from sqlalchemy.orm import Session
 from datetime import datetime
 from dotenv import load_dotenv
@@ -13,6 +14,22 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 model = genai.GenerativeModel("gemini-2.5-flash")
+
+
+def clean_markdown_response(text: str) -> str:
+    """Remove markdown code fences if the LLM wrapped the response in them."""
+    text = text.strip()
+    # Remove starting ```markdown or ```md or ```
+    if text.startswith("```"):
+        # Find the end of the first line
+        first_newline = text.find("\n")
+        if first_newline != -1:
+            text = text[first_newline + 1:]
+    # Remove ending ```
+    if text.endswith("```"):
+        text = text[:-3].rstrip()
+    return text
+
 
 class ReadmeGenerator:
 
@@ -36,6 +53,8 @@ class ReadmeGenerator:
             response = model.generate_content(contents=[prompt])
 
             readme_text = response.text.strip()
+            # Clean up any markdown code fences the LLM might have added
+            readme_text = clean_markdown_response(readme_text)
 
             job.status = "completed"
             job.prompt = readme_text

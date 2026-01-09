@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings
 from pydantic import field_validator, Field
 import os
@@ -10,12 +10,12 @@ class Settings(BaseSettings):
     API_PREFIX: str = "/api"
     DEBUG: bool = False
 
-    DATABASE_URL: str = None
+    DATABASE_URL: str = "sqlite:///./readme_generator.db"
 
     ALLOWED_ORIGINS: str = ""
 
-    GITHUB_TOKEN: str
-    WEBHOOK_SECRET: str
+    GITHUB_TOKEN: str = ""
+    WEBHOOK_SECRET: str = ""
 
     SECRET_KEY: str = Field(..., description="Secret key for JWT token signing. MUST be a strong, random string.")
     ALGORITHM: str = "HS256"  # Default algorithm for JWT
