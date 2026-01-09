@@ -83,6 +83,7 @@ export function ChatInterface({ onReadmeGenerated, onGenerating }: ChatInterface
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messageIdCounter = useRef(0);
 
   // Initialize with welcome message on client side only
   useEffect(() => {
@@ -107,8 +108,9 @@ export function ChatInterface({ onReadmeGenerated, onGenerating }: ChatInterface
   }, [messages]);
 
   const addMessage = (role: "user" | "assistant", content: string) => {
+    messageIdCounter.current += 1;
     const newMessage: Message = {
-      id: Date.now().toString(),
+      id: `msg-${messageIdCounter.current}-${Date.now()}`,
       role,
       content,
       timestamp: new Date(),

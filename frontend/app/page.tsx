@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChatInterface } from "@/components/chat-interface";
+import { ReadmeForm } from "@/components/readme-form";
 import { ReadmeViewer } from "@/components/readme-viewer";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,11 +19,15 @@ export default function Home() {
   const [readme, setReadme] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [showChat, setShowChat] = useState(true);
+  const [showForm, setShowForm] = useState(true);
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
     document.documentElement.classList.toggle("dark");
+  };
+
+  const handleReadmeChange = (newContent: string) => {
+    setReadme(newContent);
   };
 
   return (
@@ -65,10 +69,10 @@ export default function Home() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setShowChat(!showChat)}
+              onClick={() => setShowForm(!showForm)}
               className="md:hidden"
             >
-              {showChat ? (
+              {showForm ? (
                 <PanelLeftClose className="h-4 w-4" />
               ) : (
                 <PanelLeft className="h-4 w-4" />
@@ -87,25 +91,29 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex h-[calc(100vh-3.5rem)]">
-        {/* Chat Panel */}
+        {/* Form Panel - Fixed width */}
         <div
           className={`${
-            showChat ? "flex" : "hidden"
-          } w-full flex-col border-r md:flex md:w-[450px] lg:w-[500px]`}
+            showForm ? "flex" : "hidden"
+          } w-full shrink-0 flex-col border-r md:flex md:w-[450px] lg:w-[500px]`}
         >
-          <ChatInterface
+          <ReadmeForm
             onReadmeGenerated={setReadme}
             onGenerating={setIsGenerating}
           />
         </div>
 
-        {/* README Preview Panel */}
+        {/* README Preview Panel - Takes remaining space */}
         <div
           className={`${
-            showChat ? "hidden" : "flex"
-          } flex-1 flex-col md:flex`}
+            showForm ? "hidden" : "flex"
+          } min-w-0 flex-1 flex-col md:flex`}
         >
-          <ReadmeViewer content={readme} isGenerating={isGenerating} />
+          <ReadmeViewer 
+            content={readme} 
+            isGenerating={isGenerating}
+            onContentChange={handleReadmeChange}
+          />
         </div>
       </main>
 
